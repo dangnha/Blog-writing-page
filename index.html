@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Blog</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Georgia", serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      h1 {
+        color: #2d3748;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .tagline {
+        color: #666;
+        font-style: italic;
+        font-size: 1.1rem;
+      }
+
+      .controls {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .search-bar {
+        width: 100%;
+        padding: 12px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 25px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .search-bar:focus {
+        outline: none;
+        border-color: #667eea;
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .filter-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .filter-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 20px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .filter-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .filter-btn.active {
+        background: linear-gradient(45deg, #764ba2, #667eea);
+        transform: scale(1.05);
+      }
+
+      .new-post-btn {
+        background: linear-gradient(45deg, #48bb78, #38a169);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .new-post-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+      }
+
+      .blog-posts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+      }
+
+      .post {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .post::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+      }
+
+      .post:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .post h2 {
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+      }
+
+      .post-meta {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .category {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+      }
+
+      .post-content {
+        color: #4a5568;
+        margin-bottom: 1rem;
+        line-height: 1.7;
+      }
+
+      .post-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .edit-btn {
+        background: linear-gradient(45deg, #ed8936, #dd6b20);
+        color: white;
+      }
+
+      .delete-btn {
+        background: linear-gradient(45deg, #e53e3e, #c53030);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        background: white;
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal h2 {
+        margin-bottom: 1rem;
+        color: #2d3748;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #4a5568;
+        font-weight: bold;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+      }
+
+      .save-btn {
+        background: linear-gradient(45deg, #48bb78, #38a169);
+        color: white;
+      }
+
+      .cancel-btn {
+        background: linear-gradient(45deg, #a0aec0, #718096);
+        color: white;
+      }
+
+      .no-posts {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .filter-buttons {
+          justify-content: center;
+        }
+
+        .post-actions {
+          flex-direction: column;
+        }
+
+        .modal-content {
+          margin: 10% auto;
+          width: 95%;
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>My Personal Blog</h1>
+        <p class="tagline">Chia sẻ suy nghĩ và trải nghiệm của tôi</p>
+      </header>
+
+      <div class="controls">
+        <button class="new-post-btn" onclick="openNewPostModal()">
+          ✍️ Viết bài mới
+        </button>
+
+        <input
+          type="text"
+          class="search-bar"
+          placeholder="Tìm kiếm bài viết..."
+          onkeyup="searchPosts()"
+        />
+
+        <div class="filter-buttons">
+          <button class="filter-btn active" onclick="filterPosts('all')">
+            Tất cả
+          </button>
+          <button class="filter-btn" onclick="filterPosts('tech')">
+            Công nghệ
+          </button>
+          <button class="filter-btn" onclick="filterPosts('life')">
+            Cuộc sống
+          </button>
+          <button class="filter-btn" onclick="filterPosts('travel')">
+            Du lịch
+          </button>
+          <button class="filter-btn" onclick="filterPosts('food')">
+            Ẩm thực
+          </button>
+        </div>
+      </div>
+
+      <div class="blog-posts" id="blogPosts">
+        <!-- Posts will be displayed here -->
+      </div>
+    </div>
+
+    <!-- Modal for new/edit post -->
+    <div id="postModal" class="modal">
+      <div class="modal-content">
+        <h2 id="modalTitle">Viết bài mới</h2>
+        <form id="postForm">
+          <div class="form-group">
+            <label for="postTitle">Tiêu đề:</label>
+            <input type="text" id="postTitle" required />
+          </div>
+
+          <div class="form-group">
+            <label for="postCategory">Danh mục:</label>
+            <select id="postCategory" required>
+              <option value="">Chọn danh mục</option>
+              <option value="tech">Công nghệ</option>
+              <option value="life">Cuộc sống</option>
+              <option value="travel">Du lịch</option>
+              <option value="food">Ẩm thực</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="postContent">Nội dung:</label>
+            <textarea
+              id="postContent"
+              required
+              placeholder="Viết nội dung bài viết của bạn..."
+            ></textarea>
+          </div>
+
+          <div class="modal-buttons">
+            <button type="button" class="btn cancel-btn" onclick="closeModal()">
+              Hủy
+            </button>
+            <button type="submit" class="btn save-btn">Lưu bài viết</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let posts = [];
+      let currentEditId = null;
+
+      // Sample data
+      const samplePosts = [
+        {
+          id: 1,
+          title: "Bắt đầu hành trình lập trình web",
+          category: "tech",
+          content:
+            "Hôm nay tôi quyết định bắt đầu học lập trình web. Đây là một hành trình thú vị và đầy thử thách...",
+          date: new Date("2024-12-01"),
+          author: "Admin",
+        },
+        {
+          id: 2,
+          title: "Những bài học từ cuộc sống",
+          category: "life",
+          content:
+            "Cuộc sống luôn dạy cho chúng ta những bài học quý giá. Hôm nay tôi muốn chia sẻ một số suy nghĩ...",
+          date: new Date("2024-11-28"),
+          author: "Admin",
+        },
+        {
+          id: 3,
+          title: "Khám phá Đà Nẵng - thành phố đáng sống",
+          category: "travel",
+          content:
+            "Đà Nẵng không chỉ là một thành phố du lịch mà còn là nơi có chất lượng sống tuyệt vời...",
+          date: new Date("2024-11-25"),
+          author: "Admin",
+        },
+      ];
+
+      // Load posts from localStorage or use sample data
+      function loadPosts() {
+        const savedPosts = localStorage.getItem("blogPosts");
+        if (savedPosts) {
+          posts = JSON.parse(savedPosts).map((post) => ({
+            ...post,
+            date: new Date(post.date),
+          }));
+        } else {
+          posts = [...samplePosts];
+          savePosts();
+        }
+        displayPosts();
+      }
+
+      // Save posts to localStorage
+      function savePosts() {
+        localStorage.setItem("blogPosts", JSON.stringify(posts));
+      }
+
+      // Display posts
+      function displayPosts(filteredPosts = posts) {
+        const blogPostsContainer = document.getElementById("blogPosts");
+
+        if (filteredPosts.length === 0) {
+          blogPostsContainer.innerHTML =
+            '<div class="no-posts">Không có bài viết nào được tìm thấy.</div>';
+          return;
+        }
+
+        const postsHTML = filteredPosts
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .map(
+            (post) => `
+                    <article class="post fade-in">
+                        <h2>${post.title}</h2>
+                        <div class="post-meta">
+                            <span>📅 ${formatDate(post.date)}</span>
+                            <span class="category">${getCategoryName(
+                              post.category
+                            )}</span>
+                            <span>👤 ${post.author}</span>
+                        </div>
+                        <div class="post-content">
+                            ${
+                              post.content.length > 200
+                                ? post.content.substring(0, 200) + "..."
+                                : post.content
+                            }
+                        </div>
+                        <div class="post-actions">
+                            <button class="btn edit-btn" onclick="editPost(${
+                              post.id
+                            })">✏️ Sửa</button>
+                            <button class="btn delete-btn" onclick="deletePost(${
+                              post.id
+                            })">🗑️ Xóa</button>
+                        </div>
+                    </article>
+                `
+          )
+          .join("");
+
+        blogPostsContainer.innerHTML = postsHTML;
+      }
+
+      // Helper functions
+      function formatDate(date) {
+        return date.toLocaleDateString("vi-VN");
+      }
+
+      function getCategoryName(category) {
+        const categoryNames = {
+          tech: "Công nghệ",
+          life: "Cuộc sống",
+          travel: "Du lịch",
+          food: "Ẩm thực",
+        };
+        return categoryNames[category] || category;
+      }
+
+      // Modal functions
+      function openNewPostModal() {
+        document.getElementById("modalTitle").textContent = "Viết bài mới";
+        document.getElementById("postForm").reset();
+        currentEditId = null;
+        document.getElementById("postModal").style.display = "block";
+      }
+
+      function editPost(id) {
+        const post = posts.find((p) => p.id === id);
+        if (post) {
+          document.getElementById("modalTitle").textContent =
+            "Chỉnh sửa bài viết";
+          document.getElementById("postTitle").value = post.title;
+          document.getElementById("postCategory").value = post.category;
+          document.getElementById("postContent").value = post.content;
+          currentEditId = id;
+          document.getElementById("postModal").style.display = "block";
+        }
+      }
+
+      function closeModal() {
+        document.getElementById("postModal").style.display = "none";
+        currentEditId = null;
+      }
+
+      function deletePost(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
+          posts = posts.filter((p) => p.id !== id);
+          savePosts();
+          displayPosts();
+        }
+      }
+
+      // Search function
+      function searchPosts() {
+        const searchTerm = document
+          .querySelector(".search-bar")
+          .value.toLowerCase();
+        const filteredPosts = posts.filter(
+          (post) =>
+            post.title.toLowerCase().includes(searchTerm) ||
+            post.content.toLowerCase().includes(searchTerm)
+        );
+        displayPosts(filteredPosts);
+      }
+
+      // Filter function
+      function filterPosts(category) {
+        // Update active button
+        document
+          .querySelectorAll(".filter-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        event.target.classList.add("active");
+
+        const filteredPosts =
+          category === "all"
+            ? posts
+            : posts.filter((post) => post.category === category);
+        displayPosts(filteredPosts);
+      }
+
+      // Form submission
+      document
+        .getElementById("postForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const title = document.getElementById("postTitle").value;
+          const category = document.getElementById("postCategory").value;
+          const content = document.getElementById("postContent").value;
+
+          if (currentEditId) {
+            // Edit existing post
+            const postIndex = posts.findIndex((p) => p.id === currentEditId);
+            if (postIndex !== -1) {
+              posts[postIndex] = {
+                ...posts[postIndex],
+                title,
+                category,
+                content,
+              };
+            }
+          } else {
+            // Create new post
+            const newPost = {
+              id: Date.now(),
+              title,
+              category,
+              content,
+              date: new Date(),
+              author: "Admin",
+            };
+            posts.unshift(newPost);
+          }
+
+          savePosts();
+          displayPosts();
+          closeModal();
+        });
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        const modal = document.getElementById("postModal");
+        if (event.target === modal) {
+          closeModal();
+        }
+      };
+
+      // Initialize
+      loadPosts();
+    </script>
+  </body>
+</html>
